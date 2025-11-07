@@ -3,7 +3,6 @@ title: "proyecto_final"
 output: html_document
 date: "2025-11-05"
 ---
-
 Cargar las librerías y la base de datos y limpiarla
 ```{r}
 library(dplyr)
@@ -54,3 +53,26 @@ Correlacion entre la temperatura en Bejaia y la severidad de la sequía cuando h
 cor(Bejaia_fire$Temperature, Bejaia_fire$DC)
 ```
 
+vamos a ver cuantos días hubieron lluvia o no en Sidi-Bel_Abbes 
+```{r}
+# Now filter for Bejaia
+Sidi <- tabla %>% 
+  filter(Region == "Sidi-Bel_Abbes")
+
+# If you want only Bejaia AND fire:
+Sidi_fire <- Sidi %>%
+  filter(Classes == "fire")
+Sidi_not_fire <- Sidi %>% 
+  filter(Classes == "not fire")
+
+ggplot(Sidi, aes(Classes, fill = Classes))+
+  geom_bar()
+
+Sidi_frecuencias <- Sidi %>% 
+  group_by(Classes) %>% 
+  summarise(ni = n()) %>% 
+  mutate(fi = round(ni/sum(ni), 4)) %>% 
+  mutate(fi_porc = round(fi*100, 2));Sidi_frecuencias
+
+```
+Vemos que han habido más días en los que hubieron incendios (64%) que los días en los que no hubieron
