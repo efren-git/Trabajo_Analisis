@@ -53,3 +53,4 @@ Correlacion entre la temperatura en Bejaia y la severidad de la sequía cuando h
 ```{r}
 cor(Bejaia_fire$Temperature, Bejaia_fire$DC)
 ```
+
