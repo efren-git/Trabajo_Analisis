@@ -69,3 +69,27 @@ lluvia_media_Bnf <- Bejaia_not_fire%>%
             );lluvia_media_Bnf
 
 ```
+
+vamos a ver cuantos días hubieron lluvia o no en Sidi-Bel_Abbes 
+```{r}
+# Now filter for Bejaia
+Sidi <- tabla %>% 
+  filter(Region == "Sidi-Bel_Abbes")
+
+# If you want only Bejaia AND fire:
+Sidi_fire <- Sidi %>%
+  filter(Classes == "fire")
+Sidi_not_fire <- Sidi %>% 
+  filter(Classes == "not fire")
+
+ggplot(Sidi, aes(Classes, fill = Classes))+
+  geom_bar()
+
+Sidi_frecuencias <- Sidi %>% 
+  group_by(Classes) %>% 
+  summarise(ni = n()) %>% 
+  mutate(fi = round(ni/sum(ni), 4)) %>% 
+  mutate(fi_porc = round(fi*100, 2));Sidi_frecuencias
+
+```
+Vemos que han habido más días en los que hubieron incendios (64%) que los días en los que no hubieron
