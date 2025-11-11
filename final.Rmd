@@ -93,3 +93,6 @@ Sidi_frecuencias <- Sidi %>%
 
 ```
 Vemos que han habido más días en los que hubieron incendios (64%) que los días en los que no hubieron
+
+
+unytf7tfv7
