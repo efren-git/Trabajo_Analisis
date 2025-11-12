@@ -18,13 +18,8 @@ head(tabla)
 # Limpiamos la tabla de datos
 tabla <- tabla %>%
   mutate(across(where(is.character), ~trimws(.)))
+tabla$id <- 1:nrow(tabla)
 
-```
-
-Vamos a ver cómo es la base de datos
-```{r}
-ggplot(tabla, aes(x=Region, fill=Classes))+
-  geom_bar()
 ```
 
 Seleccionar sólo Bejaia de la base de datos así como si hubo incendio o no
@@ -48,6 +43,13 @@ Sidi_fire <- Sidi %>%
   filter(Classes == "fire")
 Sidi_not_fire <- Sidi %>% 
   filter(Classes == "not fire")
+
+#Cuando hay o no fuego
+not_fire <- tabla %>% 
+  filter(Classes == "not fire")
+fire <- tabla %>% 
+  filter(Classes == "fire")
+
 ```
 
 Vemos como quedan los incendios en cada zona
@@ -84,6 +86,7 @@ lluvia_media_Bf <- Bejaia_fire %>%
             var = mean((Rain - media)^2),
             sd = sqrt(var)
             );lluvia_media_Bf
+
 lluvia_media_Bnf <- Bejaia_not_fire%>% 
   summarize(máximo = max(Rain),
             mínimo = min(Rain),
@@ -95,6 +98,36 @@ lluvia_media_Bnf <- Bejaia_not_fire%>%
             CV = sd/media,
             DV = mean(abs(Rain-mediana))
             );lluvia_media_Bnf
+ggplot(tabla, aes(x=Region, y=Rain, color=Classes))+
+  geom_boxplot()
+
+```
+En el gráfico observamos que en Bejaia, la lluvia es un factor clave para saber si hay fuego o no ya que los días en los que han habido incendios no ha llovido (0.01 es casi 0), en cambio los días en los que no ha habido incendio sí ha llovido. Por ser los datos de bejaia asimétricos a la derecha, podemos concluir que la mediana de lluvia ha sido de 0.5 (0.5>0).
+
+Por lo que respecta a Sidi, no queda del todo claro que la lluvia sea un factor determinista puesto que puede llover y aún así haber incendios. O no llover y haber o no incendios.
+
+
+El siguiente dato que vamos a analizar es el RH (Humedad relativa, en %)
+```{r}
+ggplot(tabla, aes(x=Region, y=RH, color=Classes))+
+  geom_boxplot()
+ggplot(tabla, aes(x=Region, y=RH, color=Classes))+
+  geom_point(alpha=0.3)
+```
+En bejaia la humedad relativa no da mucha información, los datos no están claramente separados según si hay o no incendios. En el caso de Sidi, vemos que entre 20% y casi 50% de RH, hay fuego
+```{r}
+min_RH_sidinf <- min(Sidi_not_fire$RH);min_RH_sidinf
+```
+Vemos que entre un 20% y un 42%, podemos determinar que hay incendios en Sidi
+
+
+
+Ahora vamos a ver como afecta DMC a los incendios
+```{r}
+ggplot(tabla, aes(x=Region, y=DMC, color=Classes))+
+  geom_boxplot()
+```
+En el gráfico vemos que cuando no hay incendios, los valores de DMC son más bajos que cuando hay incendios. En este caso, son parecidos, cuando hay incendios, los valores pueden estar entre 16 y casi 65, mientras que cuando no hay incendios, suelen estar por debajo de 15. DMC se ve afectado por la temperatura, humaedad relativa y lluvia.
 ggplot(Bejaia, aes(x=Rain, y=0, color=Classes))+
   geom_point()
 
@@ -203,5 +236,15 @@ temperatura_media_Snf <- Sidi_not_fire%>%
 ggplot(Sidi, aes(x=Temperature, y=0, color=Classes))+
   geom_point()
 
+```{r}
+ggplot(tabla, aes(Rain, DMC, color=Classes))+
+  geom_point()
+ggplot(tabla, aes(x = id)) +
+  geom_line(aes(y = Rain), color = "blue") +
+  geom_line(aes(y = DMC), color = "red")
+cor(Bejaia$DMC,Bejaia$Rain)
 ```
+Vemos en el gráfico de líneas que la Lluvia afecta directamente a DMC, cuando no llueve el mantillo está menos humedo y cuando llueve está más húmedo. A menor valor de DMC, mayor será la humedad. 
+En el gráfico de puntos vemos que esto es correcto, a mayor lluvia menor humedad en el mantillo y viceversa.
+
 Tas el analisis de los incendios con respecto a la temperatura en Sidi-Bel_Abbes podemos observar claras diferencias con Bejaia, en primer lugar las temperaturas en esta zona son mucho mas elevadas (tanto cuando ha habido incendios como no), además que al contrario que en Bejaia aquí las altas temperaturas por lo general si suelen conllevar siempre a la aparicion de incendios y las bajas temperaturas a la ausencia de estos tal como se observa en el gráfico.
