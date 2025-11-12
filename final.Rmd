@@ -258,7 +258,7 @@ ffmc_stats
 
 # Gráfico 2: Densidad de FFMC
 ```{r}
-ggplot(datos, aes(x = Region, fill = Classes)) +
+ggplot(tabla, aes(x = Region, fill = Classes)) +
   geom_density(alpha = 0.6) +
   labs(title = "Distribución de FFMC por Tipo de Incendio",
        x = "FFMC", 
@@ -297,7 +297,7 @@ ggplot(tabla, aes(x = Region, y = FFMC, fill = Classes)) +
 
 # Gráfico 3: Boxplot DC vs Incendios
 ```{r}
-ggplot(datos, aes(x = Region, y = DC, fill = Classes)) +
+ggplot(tabla, aes(x = Region, y = DC, fill = Classes)) +
   geom_boxplot(alpha = 0.7) +
   labs(title = "DC vs Ocurrencia de Incendios",
        subtitle = "Drought Code - Severidad de la sequía",
@@ -317,7 +317,6 @@ ggplot(tabla, aes(x = Region, fill = Classes)) +
        x = "DC", 
        y = "Densidad") +
   theme_minimal()
-
 ```
 
 # Estadísticas por tipo de incendio
@@ -333,9 +332,8 @@ dc_stats <- datos %>%
   )
 print(dc_stats)
 ```
-
-
 Es un índice acumulativo que responde lentamente a las lluvias
+
 
 # DC por región
 ```{r}
@@ -344,7 +342,6 @@ dc_region <- tabla %>%
   group_by(Region, Classes) %>%
   summarise(DC_Promedio = round(mean(DC), 1), .groups = 'drop')
 print(dc_region)
-
 ```
 
 # Gráfico 7: DC por región
@@ -357,16 +354,11 @@ ggplot(tabla, aes(x = Region, y = DC, fill = Classes)) +
   theme_minimal()
 ```
 
-
-
 # RELACIÓN ENTRE FFMC Y DC
-
-
 ```{r}
 cat("\n=== RELACIÓN ENTRE FFMC Y DC ===\n")
 correlacion <- cor(tabla$FFMC, datos$DC, use = "complete.obs")
 cat("Correlación entre FFMC y DC:", round(correlacion, 3), "\n")
-
 ```
 
 # Gráfico 5: Scatter plot FFMC vs DC
@@ -378,13 +370,10 @@ ggplot(tabla, aes(x = Region, y = DC, color = Classes)) +
        x = "FFMC (Humedad combustibles)", 
        y = "DC (Severidad sequía)") +
   theme_minimal()
-
 ```
 
 
 # UMBRALES CRÍTICOS
-
-
 ```{r}
 cat("\n=== UMBRALES CRÍTICOS SUGERIDOS ===\n")
 
@@ -401,14 +390,7 @@ umbral_dc <- tabla %>%
 
 cat("Umbral FFMC para riesgo de incendio:", round(umbral_ffmc, 1), "\n")
 cat("Umbral DC para riesgo de incendio:", round(umbral_dc, 1), "\n")
-
 ```
-
  Usamos el percentil 25 de días con incendios como umbral conservador 
  esto significa que el 75% de los incendios ocurrieron con valores superiores
  Es un criterio preventivo que podría ayudar en alertas tempranas
-
-
-
-
-
