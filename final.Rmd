@@ -74,7 +74,8 @@ Tras hacer las frecuencias, vemos que en Bejaia hay igualdad en días de incendi
 
 A continuación vamos a determinar qué factores contribuyen a los incendios. Puesto que hay dos regiones distintas, los factores que contribuyen a incendios varían de una zona a otra.
 
-En primer lugar empezaremos analizando la zona de Bejaia. En concreto la lluvia
+### EFRÉN
+#1 En primer lugar empezaremos analizando la zona de Bejaia. En concreto la lluvia
 ```{r}
 lluvia_media_Bf <- Bejaia_fire %>% 
   summarize(máximo = max(Rain),
@@ -103,7 +104,7 @@ Vemos además en que la media de lluvia de los días con fuego es de casi 0 (0.0
 
 
 
-El siguiente dato que vamos a analizar es el RH (Humedad relativa, en %)
+#2 El siguiente dato que vamos a analizar es el RH (Humedad relativa, en %)
 ```{r}
 ggplot(tabla, aes(x=Region, y=RH, color=Classes))+
   geom_boxplot()
@@ -118,7 +119,7 @@ Vemos que entre un 20% y un 42%, podemos determinar que hay incendios en Sidi
 
 
 
-Ahora vamos a ver como afecta DMC a los incendios
+#3 Ahora vamos a ver como afecta DMC a los incendios
 ```{r}
 ggplot(tabla, aes(x=Region, y=DMC, color=Classes))+
   geom_boxplot()
@@ -136,7 +137,8 @@ Vemos en el gráfico de líneas que la Lluvia afecta directamente a DMC, cuando 
 En el gráfico de puntos vemos que esto es correcto, a mayor lluvia menor humedad en el mantillo y viceversa.
 
 
-vamos a continuar analizando los incendios pero ahora centrados en la temperatura
+### MARTÍN
+#4 vamos a continuar analizando los incendios pero ahora centrados en la temperatura
 ```{r}
 temperatura_media_Bf <- Bejaia_fire %>% 
   summarize(máximo = max(Temperature),
@@ -186,7 +188,7 @@ Sin embargo también podemos notar que cuanto mas bajas son las temperaturas men
 Tas el analisis de los incendios con respecto a la temperatura en Sidi-Bel_Abbes podemos observar claras diferencias con Bejaia, en primer lugar las temperaturas en esta zona son mucho mas elevadas (tanto cuando ha habido incendios como no), además que al contrario que en Bejaia aquí las altas temperaturas por lo general si suelen conllevar siempre a la aparicion de incendios y las bajas temperaturas a la ausencia de estos tal como se observa en el gráfico.
 
 
-Ahora por lo que respecta al índice meteorológico de incendios FWI tenemos:
+#5 Ahora por lo que respecta al índice meteorológico de incendios FWI tenemos:
 ```{r}
 FWI_media_Bf <- Bejaia_fire%>% 
   summarize(máximo = max(FWI),
@@ -214,7 +216,37 @@ ggplot(tabla, aes(Region, FWI, color= Classes))+
   geom_boxplot()
 ```
 
+### ALI
+# LIMPIEZA BÁSICA
+```{r}
+datos$Classes <- trimws(datos$Classes)  # Eliminar espacios
+datos$Classes <- as.factor(datos$Classes)  # Convertir a factor
+```
 
+la limpieza es crucial para evitar errores en el analisis 
+# 6. ANÁLISIS DE FFMC
+```{r}
+cat("\n=== ANÁLISIS FFMC (Humedad Combustibles Finos) ===\n")
+
+```
+
+# Estadísticas por tipo de incendio
+```{r}
+ffmc_stats <- datos %>%
+  group_by(Classes) %>%
+  summarise(
+    Media = round(mean(FFMC, na.rm = TRUE), 1),
+    Mediana = round(median(FFMC, na.rm = TRUE), 1),
+    Minimo = round(min(FFMC, na.rm = TRUE), 1),
+    Maximo = round(max(FFMC, na.rm = TRUE), 1),
+    Desviacion = round(sd(FFMC, na.rm = TRUE), 1)
+  )
+
+print(ffmc_stats)
+
+```
+ FFMC mide la humedad de combustibles finos (hojas, hierba)
+Valores más altos indican menor humedad = mayor riesgo de ignicion
 
 
 
