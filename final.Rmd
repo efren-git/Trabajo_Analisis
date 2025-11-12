@@ -249,17 +249,6 @@ print(ffmc_stats)
 Valores más altos indican menor humedad = mayor riesgo de ignicion
 
 # 1. LIMPIEZA BÁSICA
-```{r}
-tabla$Classes <- trimws(tabla$Classes)  # Eliminar espacios
-
-```
-
-la limpieza es crucial para evitar errores en el analisis 
-# 2. ANÁLISIS DE FFMC
-```{r}
-cat("\n=== ANÁLISIS FFMC (Humedad Combustibles Finos) ===\n")
-
-```
 
 # Estadísticas por tipo de incendio
 ```{r}
