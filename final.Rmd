@@ -386,3 +386,99 @@ cat("Umbral DC para riesgo de incendio:", round(umbral_dc, 1), "\n")
  Usamos el percentil 25 de días con incendios como umbral conservador 
  esto significa que el 75% de los incendios ocurrieron con valores superiores
  Es un criterio preventivo que podría ayudar en alertas tempranas
+
+
+
+
+
+
+
+
+
+
+### ALI
+
+
+
+#6 Vamos a continuar analizando los incendios pero ahora centrados en el FFMC y el CD
+
+#VARIABLE 1: FFMC (Fine Fuel Moisture Code)
+
+# Gráfico 1: Boxplot FFMC vs Incendios
+```{r}
+ggplot(tabla, aes(x = Region, y = FFMC, fill = Classes)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "FFMC vs Ocurrencia de Incendios",
+       subtitle = "Fine Fuel Moisture Code - Humedad de combustibles finos",
+       x = "Tipo", 
+       y = "FFMC") +
+  theme_minimal()
+
+```
+Tras ver el gráfico, podemos determinar que en ambas regiones, a partir del valor 80 de FFMC, se producen incendios, y por debajo no hay incendios.
+
+ El boxplot muestra la distribución de FFMC en cada categoría
+ La caja representa el 50% central de los datos, las líneas los extremos
+
+# Estadísticas por tipo de incendio
+```{r}
+ffmc_stats <- tabla %>%
+  group_by(Classes) %>%
+  summarise(
+    Media = (mean(FFMC)),
+    Mediana = (median(FFMC)),
+    Minimo = (min(FFMC)),
+    Maximo = (max(FFMC)),
+    Desviacion = mean(abs(FFMC-Mediana))
+  )
+ffmc_stats
+```
+
+Los resultados muestran una clara diferencia en los valores de FFMC entre días con y sin incendios.
+ Los días con incendios ("fire") presentan valores  más altos de FFMC (media de 84.2 vs 65.1), lo que confirma que la baja humedad en combustibles finos es un factor determinante para la ocurrencia de incendios forestales.
+La mediana de 87.2 en días con incendios indica que más del 50% de estos eventos
+ ocurren cuando el FFMC supera este valor, mientras que en días sin incendios
+ la mediana es de apenas 66.5.
+
+
+# Gráfico 2: Densidad de FFMC
+```{r}
+ggplot(tabla, aes(x = Region, y = FFMC, fill = Classes)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "FFMC por Región y Tipo de Incendio",
+       x = "Región", 
+       y = "FFMC") +
+  theme_minimal()
+```
+
+
+En ambas regiones, los incendios ocurren con FFMC >80, mientras que sin incendios FFMC <70.
+Sidi-Bel_Abbes muestra valores más altos (FFMC ~85-90 con incendios) vs Bejaia (FFMC ~80-85).
+El umbral de riesgo se mantiene consistente: FFMC ≥80 indica alto riesgo de incendio.
+FFMC por región
+```{r}
+ffmc_region <- tabla %>%
+  filter(complete.cases(FFMC, Region, Classes)) %>%
+  group_by(Region, Classes) %>%
+  summarise(FFMC_Promedio = round(mean(FFMC), 1), .groups = 'drop')
+cat("FFMC promedio por región y tipo de incendio:\n")
+print(ffmc_region)
+
+```
+Confirmado: en ambas regiones, FFMC >80 con incendios y <70 sin incendios.
+ Sidi-Bel_Abbes: 86.3 con incendios vs 66.1 sin incendios 
+ Bejaia: 82.4 con incendios vs 64.2 sin incendios 
+ Sidi-Bel_Abbes muestra mayor riesgo potencial con valores más altos.
+
+# VARIABLE 2: DC (Drought Code)  
+
+# Gráfico 3: Boxplot DC vs Incendios
+```{r}
+ggplot(tabla, aes(x = Region, y = DC, fill = Classes)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "DC vs Ocurrencia de Incendios",
+       subtitle = "Drought Code - Severidad de la sequía",
+       x = "Tipo de día", 
+       y = "DC") +
+  theme_minimal()
+```
