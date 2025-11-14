@@ -181,12 +181,11 @@ ggplot(tabla, aes(x=Region, y=Temperature, color=Classes))+
   geom_boxplot()
 ```
 
-Tras el analisis de las temperaturas en Bejaia cuando han habido incendios y no, podemos concluir, que las altas temperaturas no indican que siempre vaya a haber incendios, ya que al igual que han habido incendios con temperaturas superiores a 30 grados, hay veces en las que en estas temperaturas no han habido incendios como se puede observar en la gráfica. 
+Tras el analisis de las temperaturas en Bejaia cuando han habido incendios y no, podemos concluir, que las altas temperaturas contibuyen a la aparicion de incendios, ya que como se observa en el gráfico cuando las temperaturas son altas hay incendios, pero no son un factor muy determinante. 
 
-Sin embargo también podemos notar que cuanto mas bajas son las temperaturas menos incendios hay, esto se prueba observando las temperaturas minimas cuando ha habido incendio (26 Cº) y cuando no lo ha habido (22 Cº)
+Sin embargo también podemos notar que cuanto mas bajas son las temperaturas menos incendios hay, aunque esto no implica que no hayan habido incendios cuando hay bajas temperaturas.
 
 Tas el analisis de los incendios con respecto a la temperatura en Sidi-Bel_Abbes podemos observar claras diferencias con Bejaia, en primer lugar las temperaturas en esta zona son mucho mas elevadas (tanto cuando ha habido incendios como no), además que al contrario que en Bejaia aquí las altas temperaturas por lo general si suelen conllevar siempre a la aparicion de incendios y las bajas temperaturas a la ausencia de estos tal como se observa en el gráfico.
-
 
 #5 Ahora por lo que respecta al índice meteorológico de incendios FWI tenemos:
 ```{r}
@@ -215,6 +214,9 @@ FWI_media_Bnf <- Bejaia_not_fire%>%
 ggplot(tabla, aes(Region, FWI, color= Classes))+
   geom_boxplot()
 ```
+Observando los resultados de los analisis de Bejaia y Sidi-Bel_Abbes podemos decir:
+Por un lado, tanto en Bejaia como en Sidi se puede observar una gran disparidad en los datos de cuando hubo incendios y no con respecto a el FWI, lo cual significa que a menor indice meteorológico de incendios menos incendios hay y viceversa.
+Podemos concluir entonces que el FWI esta directamente relacionado con los incendios ya que con la ausencia de este los incendios son inexistentes.
 
 ### ALI
 
@@ -433,7 +435,7 @@ cor(Sidi$ISI, Sidi$Ws)
 cor(Bejaia$ISI, Bejaia$Ws)
 ```
 
-Tras analziar el gr´wfico y tener un valor cor(correlación) muy bajo (0.12) en Sidi-Bel_Abbes y -0.03 en Bejaia, podemos concluir que aunque el viento pueda incrementar ligeramente el valor de ISI, no es un factor determinante para decir que a mayor velocidad de viento, mayor índice de propagación, Aunque pueda parecer lógico la relación no se da porque seguramente cuando en estas Regiones haya viento es cuando más humedad haya y por tanto no se produzcan indencios, igualmente esto son solo suposiciones que más adelante comprobamos si son ciertas.
+Tras analziar el gráfico y tener un valor cor(correlación) muy bajo (0.12) en Sidi-Bel_Abbes y -0.03 en Bejaia, podemos concluir que aunque el viento pueda incrementar ligeramente el valor de ISI, no es un factor determinante para decir que a mayor velocidad de viento, mayor índice de propagación, Aunque pueda parecer lógico la relación no se da porque seguramente cuando en estas Regiones haya viento es cuando más humedad haya y por tanto no se produzcan indencios, igualmente esto son solo suposiciones que más adelante comprobamos si son ciertas.
 
 Además,esto indica que probablemente otras variables como la humedad de la región o la acumulación de combustible sean más determinantes. Para ello vamos a comparar el viento con el BUI.
 
