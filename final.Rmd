@@ -265,7 +265,7 @@ La mediana de 87.2 en días con incendios indica que más del 50% de estos event
 
 # Gráfico 2: Densidad de FFMC
 ```{r}
-ggplot(tabla, aes(x = Region, y = FFMC, fill = Classes)) +
+ggplot(tabla, aes(x = Region, y = FFMC, fill = region)) +
   geom_boxplot(alpha = 0.7) +
   labs(title = "FFMC por Región y Tipo de Incendio",
        x = "Región", 
@@ -551,7 +551,7 @@ cor(Sidi$ISI, Sidi$Ws)
 cor(Bejaia$ISI, Bejaia$Ws)
 ```
 
-Tras analizar el gráfico y tener un valor cor(correlación) muy bajo (0.12) en Sidi-Bel_Abbes y -0.03 en Bejaia, podemos concluir que aunque el viento pueda incrementar ligeramente el valor de ISI, no es un factor determinante para decir que a mayor velocidad de viento, mayor índice de propagación, Aunque pueda parecer lógico la relación no se da porque seguramente cuando en estas regiones hay viento es cuando más humedad haya y por tanto no se produzcan indencios, igualmente esto son solo suposiciones que más adelante comprobamos si son ciertas.
+Tras analziar el gráfico y tener un valor cor(correlación) muy bajo (0.12) en Sidi-Bel_Abbes y -0.03 en Bejaia, podemos concluir que aunque el viento pueda incrementar ligeramente el valor de ISI, no es un factor determinante para decir que a mayor velocidad de viento, mayor índice de propagación, Aunque pueda parecer lógico la relación no se da porque seguramente cuando en estas Regiones haya viento es cuando más humedad haya y por tanto no se produzcan indencios, igualmente esto son solo suposiciones que más adelante comprobamos si son ciertas.
 
 Además,esto indica que probablemente otras variables como la humedad de la región o la acumulación de combustible sean más determinantes. Para ello vamos a comparar el viento con el BUI.
 
