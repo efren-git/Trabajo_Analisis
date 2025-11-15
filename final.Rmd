@@ -395,7 +395,7 @@ Asimetria <- skew(Bejaia$Temperature); Asimetria
 
 Curtosis <- kurtosi((Bejaia$Temperature)); Curtosis
 ```
-Debido a una asimetria negativa tenemos que los datos de la temperatura en Bejaia son asimetricos a la izquierda como se puede observar en la gráfica ademas de que la curtosis es nogativa y por tanto la forma de los datos es algo platicurtica 
+Debido a una asimetria negativa tenemos que los datos de la temperatura en Bejaia son asimetricos a la izquierda como se puede observar en la gráfica ademas de que la curtosis es nagativa y por tanto la forma de los datos es algo platicurtica 
 
 Ahora hacemos lo mismo pero en Sidi :
 ```{r}
@@ -439,6 +439,28 @@ Observando los resultados de los analisis de Bejaia y Sidi-Bel_Abbes podemos dec
 Por un lado, tanto en Bejaia como en Sidi se puede observar una gran disparidad en los datos de cuando hubo incendios y no con respecto a el FWI, lo cual significa que a menor indice meteorológico de incendios menos incendios hay y viceversa.
 Podemos concluir entonces que el FWI esta directamente relacionado con los incendios ya que con la ausencia de este los incendios son inexistentes.
 
+Vamos a calcular ahora la asimetria y el apuntamiento con respeco a el FWI en Bejaia
+```{r}
+ggplot(Bejaia, aes(x= FWI)) +
+  geom_histogram(bins = 30, color ="black", fill ="steelblue")
+
+Asimetria <- skew(Bejaia$FWI); Asimetria
+Curtosis <- kurtosi((Bejaia$FWI)); Curtosis
+```
+
+Tras el calculo de la asimetria y la curtosis se ve claramente en el grafico la asimetria a la derecha que se comprueba, ya que el resultado de la asimetria es positivo , además la forma de los datos es leptocúrtica por que la curtosis es >0.
+
+
+Calculamos ahora lo mismo pero para Sidi:
+
+```{r}
+ggplot(Sidi, aes(x= FWI)) +
+  geom_histogram(bins = 30, color ="black", fill ="steelblue")
+
+Asimetria <- skew(Sidi$FWI); Asimetria
+Curtosis <- kurtosi((Sidi$FWI)); Curtosis
+```
+En el caso de Sidi aunque la asimetria es igual que en Bejaia (asimetrico a la derecha como se observa en la grafica), hay una clara diferencia de la forma de los datos ya que en este caso son platicurticos debido al resultado negativo en la curtosis
 
 
 ### ALI
