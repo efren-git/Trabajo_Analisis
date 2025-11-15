@@ -3,6 +3,7 @@ title: "proyecto_final"
 output: html_document
 date: "2025-11-05"
 ---
+#Análisis de los factores que contribuyen a los incendios
 
 Cargar las librerías y la base de datos y limpiarla
 ```{r}
@@ -10,6 +11,7 @@ library(dplyr)
 library(ggplot2)
 library(modeest)
 library(stringr)
+library(psych)
 tabla <- read.csv("bd1_8.csv", sep=";", header= TRUE)
 head(tabla)
 
@@ -19,7 +21,23 @@ tabla <- tabla %>%
 tabla$id <- 1:nrow(tabla)
 ```
 
-Seleccionar sólo Bejaia de la base de datos así como si hubo incendio o no
+Vemos que en tabla hay dos regiones: Sidi y bejaia. Así como los días del mes que corresponden a cada dato. Por lo que respectan a las variables tenemos:
+
+Temperature (°C): Temperatura media del día.
+RH (%): Humedad relativa.
+Ws (km/h): Velocidad del viento.
+Rain (mm): Precipitación diaria.
+FFMC: Fine Fuel Moisture Code (humedad de combustibles finos).
+DMC: Duff Moisture Code (humedad de la capa de mantillo).
+DC: Drought Code (severidad de la sequía).
+ISI: Initial Spread Index (índice de propagación inicial).
+BUI: Build Up Index (acumulación de combustible).
+FWI : Fire Weather Index (índice meteorológico de incendios).
+Classes: "fire" o "not fire".
+Region: Bejaia y Sidi-Bel Abbes
+
+
+Vamos a filtrar la base de datos según la región y si hubieron o no incendios
 ```{r}
 # Filtramos por Bejaia
 Bejaia <- tabla %>% 
@@ -51,11 +69,13 @@ fire <- tabla %>%
 Vemos como quedan los incendios en cada zona
 ```{r}
 ggplot(tabla, aes(Region, fill=Classes))+
-  geom_bar()
+  labs(title = "Cantidad de incendios por región")+
+  geom_bar()+
+  theme_minimal()
 ```
 Tras el gráfico, vemos que en Bejaia los días con fuego y sin fuego son casi los mismos. En cambio, en Sidi-Bel_Abbes, vemos claramente que han habido más días con incendios que sin. 
 
-Hacemos las tablas de frecuencias
+Hacemos las tablas de frecuencias para ver la cantidad de días en los que hubieron incendios o no
 ```{r}
 Bejaia_frecuencias <- Bejaia %>% 
   group_by(Classes) %>% 
@@ -69,71 +89,249 @@ Sidi_frecuencias <- Sidi %>%
   mutate(fi = round(ni/sum(ni), 4)) %>% 
   mutate(fi_porc = round(fi*100, 2));Sidi_frecuencias
 ```
-Tras hacer las frecuencias, vemos que en Bejaia hay igualdad en días de incendios, mientras que en Sidi, casi el doble de días con fuego que sin fuego.
+Tras hacer las frecuencias, vemos que en Bejaia hay casi los mismo días con incendios que sin, mientras que en Sidi, casi el doble de días con fuego que sin fuego.
 
 A continuación vamos a determinar qué factores contribuyen a los incendios. Puesto que hay dos regiones distintas, los factores que contribuyen a incendios varían de una zona a otra.
 
 ### EFRÉN
-#1 En primer lugar empezaremos analizando la zona de Bejaia. En concreto la lluvia
+#1 En primer lugar analizaremos como afecta la lluvia a los incendios
 ```{r}
-lluvia_media_Bf <- Bejaia_fire %>% 
-  summarize(máximo = max(Rain),
-            mínimo = min(Rain),
-            media = mean(Rain),
-            var = mean((Rain - media)^2),
-            sd = sqrt(var)
-            );lluvia_media_Bf
-
-lluvia_media_Bnf <- Bejaia_not_fire%>% 
-  summarize(máximo = max(Rain),
-            mínimo = min(Rain),
-            media = mean(Rain),
-            mediana = median(Rain),
-            DM_me= mean(abs(Rain - mediana)),
-            var = mean((Rain - media)^2),
-            sd = sqrt(var),
-            CV = sd/media,
-            DV = mean(abs(Rain-mediana))
-            );lluvia_media_Bnf
 ggplot(tabla, aes(x=Region, y=Rain, color=Classes))+
-  geom_boxplot()
+  labs(title = "Lluvia por Región y Tipo de Incendio")+
+  geom_boxplot()+
+  theme_minimal()
 ```
 En el gráfico observamos que los días que hubieron incendios, no ha habido lluvia. En cambio, los días en los que no han habido incendios, sí ha llovido algo. Esto tiene sentido ya que si llueve, es más dificil que se produzca un incendio.
-Vemos además en que la media de lluvia de los días con fuego es de casi 0 (0.01) y los días en los que no hubieron incendios, la mediana es de 0.5.
 
+Además vemos que los gráficos son asimétricos a la derecha, en el caso de fuego en Bejaia la media puede ser un buen representante por estar todos los datos muy juntos, mientras que en el resto de casos habría que verlo y hacer cálculos para ver si la mediana es un mejor dato
+
+```{r}
+
+lluvia_Bf <- Bejaia_fire %>% 
+  summarize(media = mean(Rain),
+          mediana = median(Rain),
+          DM= mean(abs(Rain - media)),
+          DM_med= mean(abs(Rain - mediana)),
+          var = mean((Rain - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(Rain-mediana)),
+          Q1 = quantile(Rain, prob=0.25),
+          Q3 = quantile(Rain, prob=0.75)
+          );lluvia_Bf
+
+lluvia_Bnf <- Bejaia_not_fire%>% 
+  summarize(media = mean(Rain),
+          mediana = median(Rain),
+          DM= mean(abs(Rain - media)),
+          DM_med= mean(abs(Rain - mediana)),
+          var = mean((Rain - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(Rain-mediana)),
+          Q1 = quantile(Rain, prob=0.25),
+          Q3 = quantile(Rain, prob=0.75)
+          );lluvia_Bnf
+
+lluvia_Sf <- Sidi_fire%>% 
+  summarize(media = mean(Rain),
+          mediana = median(Rain),
+          DM= mean(abs(Rain - media)),
+          DM_med= mean(abs(Rain - mediana)),
+          var = mean((Rain - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(Rain-mediana)),
+          Q1 = quantile(Rain, prob=0.25),
+          Q3 = quantile(Rain, prob=0.75)
+          );lluvia_Sf
+
+lluvia_Snf <- Sidi_not_fire%>% 
+  summarize(media = mean(Rain),
+          mediana = median(Rain),
+          DM= mean(abs(Rain - media)),
+          DM_med= mean(abs(Rain - mediana)),
+          var = mean((Rain - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(Rain-mediana)),
+          Q1 = quantile(Rain, prob=0.25),
+          Q3 = quantile(Rain, prob=0.75)
+          );lluvia_Snf
+```
+
+Como en todos los casos la asimetría (skew) > 0, por lo que la mediana es un mejor representante, se puede comprobar por ser la DM_med < DM
+
+Tras ver el gráfico y los datos, vemos que la mediana de los días sin incendios es mayor que cuando hay incendios y que el Q3 de los días en los que ha habido incendios, es menor que el Q1 de los días en los que no hubieron incendios. 
+
+Con todo lo dicho anteriormente, hay una diferencia significativa entre la cantidad de lluvia en los días cuando hay incendios y cuando no (comparación de Q3 fire y Q1 not fire) por lo que la lluvia es un factor relevante para saber si hay o no incendios.
 
 
 #2 El siguiente dato que vamos a analizar es el RH (Humedad relativa, en %)
-```{r}
-ggplot(tabla, aes(x=Region, y=RH, color=Classes))+
-  geom_boxplot()
-ggplot(tabla, aes(x=Region, y=RH, color=Classes))+
-  geom_point(alpha=0.3)
-```
-En bejaia la humedad relativa no da mucha información, los datos no están claramente separados según si hay o no incendios. En el caso de Sidi, vemos que entre 20% y casi 50% de RH, hay fuego
-```{r}
-min_RH_sidinf <- min(Sidi_not_fire$RH);min_RH_sidinf
-```
-Vemos que entre un 20% y un 42%, podemos determinar que hay incendios en Sidi
 
+Empezaremos con un gráfico para ver como quedan los datos
+```{r}
+ggplot(tabla, aes(x=Region, y=RH, fill=Classes))+
+  labs(title = "Humedad Relativa por Región y Tipo de Incendio")+
+  geom_boxplot()+
+  theme_classic()
+```
+Podemos obsevar que en los días que hay fuego, la humedad relativa es menor que cuando no hay fuego
+
+```{r}
+RH_Bf <- Bejaia_fire%>% 
+  summarize(media = mean(RH),
+          mediana = median(RH),
+          DM= mean(abs(RH - media)),
+          DM_med= mean(abs(RH - mediana)),
+          var = mean((RH - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(RH-mediana)),
+          Q1 = quantile(RH, prob=0.25),
+          Q3 = quantile(RH, prob=0.75)
+          );RH_Bf
+
+RH_Bnf <- Bejaia_not_fire%>% 
+  summarize(media = mean(RH),
+          mediana = median(RH),
+          DM= mean(abs(RH - media)),
+          DM_med= mean(abs(RH - mediana)),
+          var = mean((RH - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(RH-mediana)),
+          Q1 = quantile(RH, prob=0.25),
+          Q3 = quantile(RH, prob=0.75)
+          );RH_Bnf
+
+RH_Sf <- Sidi_fire%>% 
+  summarize(media = mean(RH),
+          mediana = median(RH),
+          DM= mean(abs(RH - media)),
+          DM_med= mean(abs(RH - mediana)),
+          var = mean((RH - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(RH-mediana)),
+          Q1 = quantile(RH, prob=0.25),
+          Q3 = quantile(RH, prob=0.75)
+          );RH_Sf
+
+RH_Snf <- Sidi_not_fire%>% 
+  summarize(media = mean(RH),
+          mediana = median(RH),
+          DM= mean(abs(RH - media)),
+          DM_med= mean(abs(RH - mediana)),
+          var = mean((RH - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(RH-mediana)),
+          Q1 = quantile(RH, prob=0.25),
+          Q3 = quantile(RH, prob=0.75)
+          );RH_Snf
+```
+Vemos que la mediana es un mejor representante de los datos por la DM_med.
+
+También podemos comparar los quantiles. En este caso, el Q1 en los días sin incendio están muy poco por debajo del Q3 de los días en los que hubieron incendios.
 
 
 #3 Ahora vamos a ver como afecta DMC a los incendios
+
+DMC se ve afectado por la temperatura, humaedad relativa y lluvia. Es la humedad en la capa del mantillo
+
+El gráfico es el siguiente
 ```{r}
-ggplot(tabla, aes(x=Region, y=DMC, color=Classes))+
-  geom_boxplot()
+ggplot(tabla, aes(x=Region, y=DMC, fill=Classes))+
+  labs(title = "DMC por Región y Tipo de Incendio")+
+  geom_boxplot()+
+  theme_classic()
 ```
-En el gráfico vemos que cuando no hay incendios, los valores de DMC son más bajos que cuando hay incendios. En este caso, son parecidos las dos regiones, cuando hay incendios, los valores pueden estar entre 16 y casi 65, mientras que cuando no hay incendios, suelen estar por debajo de 15. DMC se ve afectado por la temperatura, humaedad relativa y lluvia.
+En el gráfico vemos que cuando no hay incendios, los valores de DMC son más bajos que cuando hay incendios. En este caso, sonmuy parecidas las gráficas de ambas regiones. Vemos que el 50% de los datos centrales de fuego siempre están por encima del 50% central de cuando no hay fuego
+
+```{r}
+DMC_Bf <- Bejaia_fire%>% 
+  summarize(media = mean(DMC),
+          mediana = median(DMC),
+          DM= mean(abs(DMC - media)),
+          DM_med= mean(abs(DMC - mediana)),
+          var = mean((DMC - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(DMC-mediana)),
+          Q1 = quantile(DMC, prob=0.25),
+          Q3 = quantile(DMC, prob=0.75)
+          );DMC_Bf
+
+DMC_Bnf <- Bejaia_not_fire%>% 
+  summarize(media = mean(DMC),
+          mediana = median(DMC),
+          DM= mean(abs(DMC - media)),
+          DM_med= mean(abs(DMC - mediana)),
+          var = mean((DMC - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(DMC-mediana)),
+          Q1 = quantile(DMC, prob=0.25),
+          Q3 = quantile(DMC, prob=0.75)
+          );DMC_Bnf
+
+DMC_Sf <- Sidi_fire%>% 
+  summarize(media = mean(DMC),
+          mediana = median(DMC),
+          DM= mean(abs(DMC - media)),
+          DM_med= mean(abs(DMC - mediana)),
+          var = mean((DMC - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(DMC-mediana)),
+          Q1 = quantile(DMC, prob=0.25),
+          Q3 = quantile(DMC, prob=0.75)
+          );DMC_Sf
+
+DMC_Snf <- Sidi_not_fire%>% 
+  summarize(media = mean(DMC),
+          mediana = median(DMC),
+          DM= mean(abs(DMC - media)),
+          DM_med= mean(abs(DMC - mediana)),
+          var = mean((DMC - media)^2),
+          sd = sqrt(var),
+          CV = sd/media,
+          DV = mean(abs(DMC-mediana)),
+          Q1 = quantile(DMC, prob=0.25),
+          Q3 = quantile(DMC, prob=0.75)
+          );DMC_Snf
+```
+Con los datos, podemos afirmar que en Bejaia, cuando hay incendios Q1 (11.85) > Q3 (7.85), no incendio. En Sidi ocurre lo mismo cuando hay incendio Q1 (12.85) Q3 (9.65), no incendio.
+
+Puesto que DMC mide la humedad, vamos a ver como se relaciona con la lluvia
 ```{r}
 ggplot(tabla, aes(Rain, DMC, color=Classes))+
-  geom_point()
+  geom_point()+
+  labs(title = "DMC en funció de Lluvia")
+
 ggplot(tabla, aes(x = id)) +
-  geom_line(aes(y = Rain), color = "blue") +
-  geom_line(aes(y = DMC), color = "red")
+  geom_line(aes(y = Rain, color = "Lluvia")) +
+  geom_line(aes(y = DMC, color = "DMC")) +
+  facet_wrap(~region, scales = "free_x", ncol = 1) +
+  scale_color_manual(
+    name = "Variables",
+    values = c("Lluvia" = "blue", "DMC" = "red")
+  ) +
+  labs(
+    title = "Comparación de Lluvia y DMC entre regiones",
+    x = "Registro (ID)",
+    y = "Valores"
+  ) +
+  theme_minimal()
+
+
+
 cor(Bejaia$DMC,Bejaia$Rain)
 ```
 Vemos en el gráfico de líneas que la Lluvia afecta directamente a DMC, cuando no llueve el mantillo está menos humedo y cuando llueve está más húmedo. A menor valor de DMC, mayor será la humedad. 
 En el gráfico de puntos vemos que esto es correcto, a mayor lluvia menor humedad en el mantillo y viceversa.
+
 
 
 ### MARTÍN
