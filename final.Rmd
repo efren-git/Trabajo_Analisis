@@ -164,7 +164,6 @@ lluvia_Bf <- Bejaia_fire %>%
           DV = mean(abs(Rain-mediana)),
           Q1 = quantile(Rain, prob=0.25),
           Q3 = quantile(Rain, prob=0.75),
-          Asim = skew(Rain),
           Curtosis = kurtosi(Rain)
           );lluvia_Bf
 
@@ -180,7 +179,6 @@ lluvia_Bnf <- Bejaia_not_fire%>%
           Q1 = quantile(Rain, prob=0.25),
           Q3 = quantile(Rain, prob=0.75),
           máximo = max(Rain),
-          Asim = skew(Rain),
           Curtosis = kurtosi(Rain)
           );lluvia_Bnf
 
@@ -195,7 +193,6 @@ lluvia_Sf <- Sidi_fire%>%
           DV = mean(abs(Rain-mediana)),
           Q1 = quantile(Rain, prob=0.25),
           Q3 = quantile(Rain, prob=0.75),
-          Asim = skew(Rain),
           Curtosis = kurtosi(Rain)
           );lluvia_Sf
 
@@ -210,7 +207,6 @@ lluvia_Snf <- Sidi_not_fire%>%
           DV = mean(abs(Rain-mediana)),
           Q1 = quantile(Rain, prob=0.25),
           Q3 = quantile(Rain, prob=0.75),
-          Asim = skew(Rain),
           Curtosis = kurtosi(Rain)
           );lluvia_Snf
 ```
@@ -277,7 +273,6 @@ RH_Bf <- Bejaia_fire%>%
           DV = mean(abs(RH-mediana)),
           Q1 = quantile(RH, prob=0.25),
           Q3 = quantile(RH, prob=0.75),
-          Asim = skew(RH),
           Curtosis = kurtosi(RH)
           );RH_Bf
 
@@ -292,7 +287,6 @@ RH_Bnf <- Bejaia_not_fire%>%
           DV = mean(abs(RH-mediana)),
           Q1 = quantile(RH, prob=0.25),
           Q3 = quantile(RH, prob=0.75),
-          Asim = skew(RH),
           Curtosis = kurtosi(RH)
           );RH_Bnf
 
@@ -307,7 +301,6 @@ RH_Sf <- Sidi_fire%>%
           DV = mean(abs(RH-mediana)),
           Q1 = quantile(RH, prob=0.25),
           Q3 = quantile(RH, prob=0.75),
-          Asim = skew(RH),
           Curtosis = kurtosi(RH)
           );RH_Sf
 
@@ -322,13 +315,14 @@ RH_Snf <- Sidi_not_fire%>%
           DV = mean(abs(RH-mediana)),
           Q1 = quantile(RH, prob=0.25),
           Q3 = quantile(RH, prob=0.75),
-          Asim = skew(RH),
           Curtosis = kurtosi(RH)
           );RH_Snf
 ```
 
 Podemos concluir que la mediana es un mejor representante de los datos
-puesto que aunque a veces sea por poco, la DM_med \< DM. Vemos también que la asimetría es positiva excepto para Bejaia cuando no hay fuego. Los valores cercanos a 0, por lo que son ligeramente asimétricos. Esto explica que la diferencia entre la DM y la DM_med sea mínima.
+puesto que aunque a veces sea por poco, la DM_med \< DM. También vemos
+que la curtosis siempre es negativa por lo que los datos son asimétricos
+a la izquierda.
 
 #### 2.3 CONCLUSIONES
 
@@ -381,7 +375,6 @@ DMC_Bf <- Bejaia_fire%>%
           DV = mean(abs(DMC-mediana)),
           Q1 = quantile(DMC, prob=0.25),
           Q3 = quantile(DMC, prob=0.75),
-          Asim = skew(DMC),
           Curtosis = kurtosi(DMC)
           );DMC_Bf
 
@@ -396,7 +389,6 @@ DMC_Bnf <- Bejaia_not_fire%>%
           DV = mean(abs(DMC-mediana)),
           Q1 = quantile(DMC, prob=0.25),
           Q3 = quantile(DMC, prob=0.75),
-          Asim = skew(DMC),
           Curtosis = kurtosi(DMC)
           );DMC_Bnf
 
@@ -411,7 +403,6 @@ DMC_Sf <- Sidi_fire%>%
           DV = mean(abs(DMC-mediana)),
           Q1 = quantile(DMC, prob=0.25),
           Q3 = quantile(DMC, prob=0.75),
-          Asim = skew(DMC),
           Curtosis = kurtosi(DMC)
           );DMC_Sf
 
@@ -426,13 +417,12 @@ DMC_Snf <- Sidi_not_fire%>%
           DV = mean(abs(DMC-mediana)),
           Q1 = quantile(DMC, prob=0.25),
           Q3 = quantile(DMC, prob=0.75),
-          Asim = skew(DMC),
           Curtosis = kurtosi(DMC)
           );DMC_Snf
 ```
 
 Con los datos, podemos afirmar que hay asimetría a la derecha por ser la
-asimetría en todos los casos positiva, por lo que el mejor representante
+curtosis en todos los casos positiva, por lo que el mejor representante
 de los datos es la mediana.
 
 **BEJAIA:** Q1 (11.85) incendios \> Q3 (7.85) no incendio.
@@ -584,7 +574,7 @@ Asimetria <- skew(Sidi$Temperature); Asimetria
 Curtosis <- kurtosi((Sidi$Temperature)); Curtosis
 ```
 
-En el caso de Sidi debido a el resultado de la asimetria sabemos que los
+En el caso de Sidi debido al resultado de la asimetria sabemos que los
 datos son algo asimetricos a la izquierda aunque tambien algo simetricos
 (como se observa en el grafico) y en este caso los datos son mas
 platicurticos que en Bejaia
@@ -688,7 +678,7 @@ Curtosis <- kurtosi((Sidi$FWI)); Curtosis
 En el caso de Sidi aunque la asimetria es igual que en Bejaia
 (asimetrico a la derecha como se observa en la grafica), hay una clara
 diferencia de la forma de los datos ya que en este caso son
-platicurticos debido al resultado negativo en la curtosis
+practicamente mesocurticos debido a que la curtosis en este caso es de -0.09
 
 ## 6. FFMC (Fine Fuel Moisture Code)
 
@@ -837,6 +827,7 @@ directamente a la aparición de incendios.
 #### 8.1 Datos y gráfico
 
 ```{r}
+
 Bui_media_bf <- Bejaia_fire %>% 
   summarise(maximo= max(BUI),
             minimo= min(BUI),
@@ -866,6 +857,8 @@ Bui_media_bnf <- Bejaia_not_fire %>%
             Q3 = quantile(BUI, prob=0.75),
             Curtosis = kurtosi(BUI)
             );Bui_media_bnf
+
+
 
 
 Bui_media_sf <- Sidi_fire %>% 
@@ -904,10 +897,38 @@ Bui_media_snf <- Sidi_not_fire %>%
 
 
 
+
+```
+
+```{r}
 ggplot(tabla, aes(x= Region, y= BUI, fill= Classes))+
   geom_boxplot()+
   labs(title= "BUI por Región e incendio")
 ```
+
+```{r}
+
+ggplot(Bejaia, aes(x= BUI)) +
+  geom_histogram(fill = "steelblue", color = "black")
+
+Asimetria <- skew(Bejaia$FWI); Asimetria
+Curtosis <- kurtosi((Bejaia$FWI)); Curtosis
+
+ggplot(Sidi, aes(x= BUI)) +
+  geom_histogram(fill = "steelblue", color = "black")
+
+Asimetria <- skew(Sidi$BUI); Asimetria
+Curtosis <- kurtosi((Sidi$BUI)); Curtosis
+
+
+
+```
+
+
+
+
+
+
 
 #### 8.2 CONCLUSIONES
 
@@ -915,22 +936,33 @@ Como podemos ver en ambos gráficos, observamos que entre un (0-10)% de
 BUI no suele haber incendios, esto tiene sentido ya que a menor cantidad
 de material inflamable menor es la posibilidad de generar un incendio.
 
-Además, En ambas regiones, la media de BUI es bastante superior a los
-dias sin fuego por lo que evidentemente el riesgo de incendio aumenta a
-mayor acumuulación de combustible. Por ejemplo, la media de Bejaia en
-dias de fuego es de 24,5 y los dias sin incendios 6.8.
+Además, En ambas regiones, la mediana de BUI es bastante superior a los
+días sin fuego por lo que evidentemente el riesgo de incendio aumenta a
+mayor acumulación de combustible. Por ejemplo, la mediana de Bejaia en
+días de fuego es de 19,2 y los días sin incendios 5.1. Por otro lado,
+en Sidi la mediana de Sidi en días de fuego es de 19,35 y los días sin incendios 6.2.
 
-Por otra parte la varianza alta en los dias de fuego (+200) indica que
+En ambos casos utilizamos la mediana porque la varianza y el coeficiente de variación son muy altas.
+
+
+
+Por otra parte la varianza alta en los días de fuego (+200) indica que
 el BUI suele variar y no hay un valor que se repita constantemente, pero
-siendo habitual que supere el 15%. En cambio, los dias sin incendios hay
+siendo habitual que supere el 15%. En cambio, los días sin incendios hay
 una varianza mas baja(40), lo que nos dice que el BUI se mantiene bajo
 (entre el 0-10%).
+
+En ambas ciudades la curtosis es positiva, lo que indica que los datos son leptocúrticos.
 
 Ahora vamos a añadir las variables ISI(índice de propagación inicial) y
 Ws(velocidad del viento) para comparar las dos al mismo tiempo en un
 gráfico.
 
 #### 8.3 COMPARACIÓN CON ISI Y Ws
+
+
+
+### 9 ISI
 
 Primero vamos con ISI, con los datos de Sidi-Bel_Abbes:
 
@@ -947,7 +979,6 @@ Isi_media_sf <- Sidi_fire %>%
             DV= mean(abs(ISI- mediana)),
             Q1 = quantile(ISI, prob=0.25),
             Q3 = quantile(ISI, prob=0.75),
-            Curtosis = kurtosi(ISI)
             );Isi_media_sf
 
 Isi_media_snf <- Sidi_not_fire %>% 
@@ -962,7 +993,6 @@ Isi_media_snf <- Sidi_not_fire %>%
             DV= mean(abs(ISI- mediana)),
             Q1 = quantile(ISI, prob=0.25),
             Q3 = quantile(ISI, prob=0.75),
-            Curtosis = kurtosi(ISI)
             );Isi_media_snf
 
 
@@ -978,7 +1008,6 @@ Isi_media_bf <- Bejaia_fire %>%
             DV= mean(abs(ISI- mediana)),
             Q1 = quantile(ISI, prob=0.25),
             Q3 = quantile(ISI, prob=0.75),
-            Curtosis = kurtosi(ISI)
             );Isi_media_bf
 
 Isi_media_bnf <- Bejaia_not_fire %>% 
@@ -993,14 +1022,52 @@ Isi_media_bnf <- Bejaia_not_fire %>%
             DV= mean(abs(ISI- mediana)),
             Q1 = quantile(ISI, prob=0.25),
             Q3 = quantile(ISI, prob=0.75),
-            Curtosis = kurtosi(ISI)
             );Isi_media_bnf
 
 
 
+```
 
+
+```{r}
+ggplot(tabla, aes(x= Region, y= ISI, fill= Classes))+
+  geom_boxplot()+
+  labs(title= "Indice de propagación inicial")
+  
 
 ```
+
+```{r}
+ggplot(Bejaia, aes(x= ISI)) +
+  geom_histogram(fill = "steelblue", color = "black")
+
+Asimetria <- skew(Bejaia$ISI); Asimetria
+Curtosis <- kurtosi((Bejaia$ISI)); Curtosis
+
+ggplot(Sidi, aes(x= ISI)) +
+  geom_histogram(fill = "steelblue", color = "black")
+
+Asimetria <- skew(Sidi$ISI); Asimetria
+Curtosis <- kurtosi((Sidi$ISI)); Curtosis
+
+```
+
+
+
+
+
+
+
+En ambas regiones, el ISI es mucho mayor los días que hay incendios que cuando no los hay, ya que el índice de propagación inicial nos indica  la velocidad inicial con la que un incendio comienza a propagarse (siendo mayor con incendios).
+
+Tanto en Bejaia como en Sidi, los valores presentan curtosis negativa, por lo que los datos son platicúrticos.
+
+La asimetria es positiva y vemos que los datos estan distribuidos hacia la derecha para las dos ciudades.  
+La mediana es baja cuando no hay incendios (1-1,3) y alta cuando sí los hay (5-8)
+
+
+##Ws
+
 
 Ahora hacemos lo mismo pero para la velocidad del viento:
 
@@ -1068,7 +1135,54 @@ Ws_media_bnf <- Bejaia_not_fire %>%
 
 
 
+
+
 ```
+
+```{r}
+ggplot(tabla, aes(x= Region, y= Ws, fill= Classes))+
+  geom_boxplot()+
+  labs(title= "Velocida del viento")
+
+
+```
+
+```{r}
+ggplot(Bejaia, aes(x= Ws)) +
+  geom_bar(fill = "steelblue", color = "black")
+
+Asimetria <- skew(Bejaia$Ws); Asimetria
+Curtosis <- kurtosi((Bejaia$Ws)); Curtosis
+
+ggplot(Sidi, aes(x= Ws)) +
+  geom_bar(fill = "steelblue", color = "black")
+Asimetria <- skew(Sidi$Ws); Asimetria
+Curtosis <- kurtosi((Sidi$Ws)); Curtosis
+```
+
+
+
+
+
+
+
+
+
+
+
+Los dias con incendios en Bejaia, la media de viento es aproximadamente de 15,6 km/h, mientras que los días sin incendios es un poco superior (16,3 km/h).
+
+Los dias con incendios en Sidi, la media de viento es aproximadamente de 15,07 km/h, mientras que los días sin incendios es un ligeramente inferior (14,81 km/h).
+
+Esto nos muestra que prácticamente todos los días tiene la misma velocidad, lo que indica que no depende de que haya directamente incendios o no Esto lo podemos confirmar porque el coeficiente de variación de ambas regiones se acerca bastante a 0.
+
+Además, la desviación típica es mayor los días sin fuego (>3). 
+
+En Bejaia, los valores presentan curtosis negativa, por lo que los datos son platicúrticos .Mientras que en Sidi es lo contrario, son leptocúrticos,es decir, los datos estan distribuidos de manera menos concentrada que una distribución normal
+
+
+También podemos ver que la velocidad máxima del viento (km/h) en  Bejaia es 26 y en Sidi 29, por lo tanto podemos concluir que estas regiones no tienen viento extremo o fuerte como para ser peligrosos, ya que no superan  ni los 30km/h.
+
 
 Una vez tenemos los datos de ambas variables, las comparamos en un mismo
 gráfico para ver si tienen alguna correlación directa:
