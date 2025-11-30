@@ -1284,7 +1284,6 @@ incendios y \<70 que no los haya. -Sidi-Bel_Abbes: 88.3 con incendios y
 tabla <- read.csv("bd1_8.csv", sep=";", header= TRUE)
 head(tabla)
 ```
-
 # Limpiamos la tabla de datos
 ```{r}
 tabla <- tabla %>%
@@ -1462,7 +1461,7 @@ print(round(correlacion, 3))
 Valor = 0.507 → Correlación positiva Esto significa que cuando FFMC
 aumenta, DC también tiende a aumentar, entonces no es una correlación
 perfecta (1.0), otros factores también influyen.
-
+DC
 
 # DC - Lineal para Bejaia
 ```{r}
@@ -1609,6 +1608,7 @@ print(resumen_modelos)
 
 CONCLUSIÓN:
 "Los modelos de regresión para DC son significativamente superiores a los de FFMC en términos de capacidad predictiva. El DC muestra una fuerte dependencia temporal acumulativa, mientras que el FFMC está influenciado por múltiples factores meteorológicos además del tiempo transcurrido. Entre regiones, Bejaia presenta relaciones más consistentes y predecibles que Sidi-Bel_Abbes."
+
 
 
 
