@@ -1196,7 +1196,7 @@ ggplot(Bejaia, aes ( x = id, y = FWI))+
   theme_light()
 ```
 
-Ajustamos modelo logaritmico, resistencia = a+b LN(id)
+Ajustamos modelo inverso, resistencia = a+b(1/x)
 
 ```{r}
 fit_INV <-lm(FWI ~ I(1/id) , data = Bejaia)
