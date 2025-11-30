@@ -1199,20 +1199,21 @@ ggplot(Bejaia, aes ( x = id, y = FWI))+
 Ajustamos modelo logaritmico, resistencia = a+b LN(id)
 
 ```{r}
-fit_LNX <-lm(FWI ~ log(id) , data = Bejaia)
-summary(fit_LNX)
+fit_INV <-lm(FWI ~ I(1/id) , data = Bejaia)
+summary(fit_INV)
 ```
 
-El modelo es = -0.03608 + 1.46531 * LN(id).
-R2 = 4.68% un modelo con R2 muy bajo esto significa que no es bueno
+El modelo es = 6.0312 - 10.2698 * (1/id).
+R2 = 3.03% un modelo con R2 muy bajo esto significa que no es bueno
 
 Representamos el modelo
 
 ```{r}
-Bejaia$pred_LNX <- predict(fit_LNX)
+Bejaia$pred_INV <- predict(fit_INV)
+
 ggplot(Bejaia, aes( x = id, y =FWI))+
   geom_point(color = "blue", size = 3, alpha = 0.6)+
-  geom_line(aes(y = pred_LNX), color = "red", size = 1)+
+  geom_line(aes(y = pred_INV), color = "red", size = 1)+
   theme_light()
 ```
 
